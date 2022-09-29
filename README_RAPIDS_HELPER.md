@@ -20,6 +20,7 @@ python create_rapids_participant_file.py --mysqlconfig <.my.cnf location> --data
 python create_multiple_timezones.py  --database <database name> --device_source_table <tablename> 
 					--survey_source_table <tablename> --survey_col_name <name of label column in survey table>
 					 [--mysqlconfig <.my.cnf location>] [--destination_file <full path of output file>]
+			  [--default_tz <time zone setting>], [--participant_directory <full path of participant_files directory>]
 ```
 
 - This script creates a TZCODES_FILE (a CSV file containing the time zones in which participants’ devices sensed data) that can be supplied to RAPIDS in the `config.yaml` under `[TIMEZONE][MULTIPLE][TZCODES_FILE]`
@@ -43,3 +44,5 @@ python create_multiple_timezones.py  --database <database name> --device_source_
 | AA0913 | 3 |
 | AA10307 | 2 |
 | AA12108 | 2 |
+
+- A default tzcode can be specified with the `default_tz` option (i.e. `--default_tz America/New_York`) which is then used for participants with missing time zone data. Using argument "ignore" results in the deletion of the `.yaml` files for participants with missing time zone data so that RAPIDS ignores them. The default for `default_tz` simply raises an exception if there are participants with missing time zone data so that this can be addressed before using RAPIDS. When using argument "ignore", please specify the path to the participant_files directory with `--participant_directory` if different than default of `../../../data/external/participant_files/`.
