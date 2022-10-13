@@ -95,7 +95,7 @@ def main():
         participants = {}
         combined = 0
         for current_row in range(len(df)):
-            label = str(df.at[current_row, "label"]).replace("'","")
+            label = str(df.at[current_row, "label"]).replace("'","_apostrophe_").replace("’","_fancyapostrophe_").replace(" ","_space_")
             if label in participants:
                 participants[label]["device_id"] = participants[label]["device_id"] + ";" + df.at[current_row, "device_id"]
                 combined = combined + 1
@@ -104,8 +104,8 @@ def main():
                 participant["device_id"] = df.at[current_row, "device_id"]
                 participant["fitbit_id"] = ""
                 participant["empatica_id"] = ""
-                participant["pid"] = str(df.at[current_row, "label"]).replace("'","")
-                participant["label"] = str(df.at[current_row, "label"]).replace("'","")
+                participant["pid"] = str(df.at[current_row, "label"]).replace("'","_apostrophe_").replace("’","_fancyapostrophe_").replace(" ","_space_").rstrip()
+                participant["label"] = str(df.at[current_row, "label"]).replace("'","_apostrophe_").replace("’","_fancyapostrophe_").replace(" ","_space_").rstrip()
                 if (df.at[current_row, "model"] == "iPhone"):
                     participant["platform"] = "ios"
                 else:
@@ -137,12 +137,12 @@ def main():
                 writer.writerow([participants[participant]["device_id"],
                                 participants[participant]["fitbit_id"],
                                 participants[participant]["empatica_id"],
-                                str(participants[participant]["pid"]).replace("'",""),
-                                str(participants[participant]["label"]).replace("'",""),
+                                participants[participant]["pid"],
+                                participants[participant]["label"],
                                 participants[participant]["platform"],
                                 participants[participant]["start_date"],
                                 participants[participant]["end_date"]])
-            print("Created "+str(len(participants.keys()))+" participant entries.")
+            print("Created "+str(len(participants.keys()))+" participant entries from "+str(len(result_set))+" database entries.")
             print("Wrote "+str(write_count)+" participant entries.")
 if __name__ == "__main__":
 
