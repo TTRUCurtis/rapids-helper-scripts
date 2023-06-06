@@ -59,3 +59,54 @@ python create_multiple_timezones.py  --database <database name> --device_source_
 - If using argument `remove` for option `tz_default`, the default output destination for the modified participant file is `../../../participant_file_modified.csv`. A different destination can be specified with option `--participant_output`.
 - If using argument `ignore`, user will need to change values of `[IF_MISSING_TZCODE]` and/or `[DEFAULT_TZCODE]` under `[TIMEZONE][MULTIPLE]` in `config.yaml`. Refer to https://www.rapids.science/1.9/setup/configuration/#timezone-of-your-study for reference.
 
+
+### Uploading RAPIDS output from CSV to MySQL
+
+`src/data/rapids_csv_to_mysql.py:`
+
+The CSV to MySQL script is a Python program designed to facilitate the uploading of data from RAPIDS output CSV files to a MySQL database. It provides flexibility in selecting specific features to upload and allows for the creation of custom table names.
+
+#### **Prerequisites**
+
+Before using this script, make sure you have the following installed:
+
+- Python 3.x
+- **`argparse`** library
+- **`sqlalchemy`** library
+- **`pandas`** library
+
+#### **Usage**
+
+1. Open a command prompt or terminal and navigate to the directory where you saved the script. Default path to RAPIDS output assumes the script is located with `rapids/rapids-helper-scripts/src/data/` (see `--csv` below).
+2. Run the script using the following command:
+    
+    ```
+    python rapids_csv_to_mysql.py -d <database> -t <table> -g <level> [--csv <output_path>] [-f <feature1> <feature2> ...] [-c <collation>]
+    ```
+    
+    The script accepts the following arguments:
+    
+    - **`-d, --database`**: Specifies the name of the MySQL database you want to upload the data to.
+    - **`-t, --table_name`**: Specifies the name of the tables that will be created in the MySQL database.
+    - **`-g, --level`**: Specifies the level of analysis done with RAPIDS (e.g., "daily" for daily-level segments).
+    - **`---csv`**: (Optional) Specifies the path to the folder containing the RAPIDS output CSV files. Defaults to **`../../../data/processed/`**.
+    - **`-f, --features`**: (Optional) Specifies a list of behavioral features you want to upload from the RAPIDS output. If not specified, all available features will be uploaded.
+    - **`-c, --collation`**: (Optional) Specifies the desired collation for varchar and text columns. Defaults to **`utf8mb4_general_ci`**.
+
+Note: Ensure that you have the necessary permissions and appropriate configurations to establish a connection to the MySQL database.
+
+#### **Example Table Name**
+
+To illustrate the table naming convention used by this script, consider the following example inputs:
+
+- Table Name: **`mytable`**
+- Level: **`daily`**
+
+In this case, assuming the selected features are accelerometer and activity recognition, the resulting table name for these features at the daily level would be:
+
+```
+mytable$accelerometer$daily
+mytable$activity_recognition$daily
+```
+
+The script appends the sensor name and level to the table name using the **`$`** delimiter, resulting in distinct table names for each feature at the specified level of analysis. This naming convention allows for easy identification and organization of the uploaded data within the MySQL database.
